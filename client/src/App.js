@@ -62,10 +62,10 @@ class App extends Component {
           If your contracts compiled and migrated successfully, below will show
           a stored value of 5 (by default).
         </p>
-        <p>
+        {/* <p>
           Try changing the value stored on <strong>line 42</strong> of App.js.
         </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+        <div>The stored value is: {this.state.storageValue}</div> */}
       </div>
     );
   }
