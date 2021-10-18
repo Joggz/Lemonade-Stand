@@ -30,7 +30,30 @@ contract LemonadeStand {
         skucount = 0;
     }
 
-    
+    modifier onlyOwner () {
+        require(msg.sender == Owner);
+        _;
+    }
+
+    modifier verifyCaller(address _address) {
+        require(msg.sender == _address);
+        _;
+    }
+
+    modifier paidEnough(uint _price) {
+        require(msg.value >= _price);
+        _;
+    }
+
+    modifier forSale(uint _sku) {
+        require(items[_sku].state == State.forsale);
+        _;
+    }
+
+    modifier Sold(uint _sku) {
+        require(items[_sku].state == State.sold);
+        _; 
+    }
 
 
 }
