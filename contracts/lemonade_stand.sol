@@ -63,5 +63,19 @@ contract LemonadeStand {
         items[skucount] = Item({name: _name, sku: skucount, price: _price, state: State.forsale, seller: msg.sender, buyer: address(0)});
     }
 
+    function buyItem(uint sku) forSale(sku) paidEnough(items[sku].price) payable public {
+         buyer = msg.sender;
+
+        uint price = items[sku].price;
+        items[sku].buyer = buyer;
+
+        items[sku].state = State.sold;
+
+        skucount = skucount - 1;
+
+       payable(items[sku].seller).transfer(price);
+
+        emit sold(sku);
+    }
 
 }
