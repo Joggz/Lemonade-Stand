@@ -55,5 +55,13 @@ contract LemonadeStand {
         _; 
     }
 
+    function addItem( string memory  _name, uint _price) onlyOwner public{
+        skucount = skucount + 1;
+
+        emit Forsale(skucount);
+
+        items[skucount] = Item({name: _name, sku: skucount, price: _price, state: State.forsale, seller: msg.sender, buyer: address(0)});
+    }
+
 
 }
