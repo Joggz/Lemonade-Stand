@@ -6,7 +6,7 @@ contract LemonadeStand {
     uint skucount;
     // address buyer;
 
-    enum State { forsale, sold}
+    enum State { forsale, sold, shipped}
 
     struct Item { 
         string name;
@@ -24,6 +24,8 @@ contract LemonadeStand {
     event Forsale(uint skucount);
     
     event sold(uint sku);
+
+    event shipped(uint sku);
 
     constructor () {
         Owner = msg.sender;
@@ -96,6 +98,19 @@ contract LemonadeStand {
         seller = items[_sku].seller;
         buyer  = items[_sku].buyer;
     }
+
+    function shipItem(uint _sku)  public  Sold(_sku) verifyCaller(items[_sku].seller) returns(string memory stateIs) {
+         uint state;
+
+         items[_sku].state = State.shipped;
+        state = uint(items[_sku].state);
+
+        if(state == 3){
+            stateIs = "Item shipped";
+        }
+
+        emit shipped(_sku);
+    }   
 
 }
    
