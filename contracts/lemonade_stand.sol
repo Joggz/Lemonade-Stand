@@ -4,7 +4,7 @@ pragma solidity >=0.4.21 <0.9.0;
 contract LemonadeStand {
     address Owner;
     uint skucount;
-    address buyer;
+    // address buyer;
 
     enum State { forsale, sold}
 
@@ -60,11 +60,11 @@ contract LemonadeStand {
 
         emit Forsale(skucount);
 
-        items[skucount] = Item({name: _name, sku: skucount, price: _price, state: State.forsale, seller: msg.sender, buyer: address(0)});
+        items[skucount] = Item({name: _name, sku: skucount, price: _price, state: State.forsale, seller: Owner, buyer: address(0)});
     }
 
     function buyItem(uint sku) forSale(sku) paidEnough(items[sku].price) payable public {
-         buyer = msg.sender;
+      address   buyer = msg.sender;
 
         uint price = items[sku].price;
         items[sku].buyer = buyer;
@@ -78,4 +78,28 @@ contract LemonadeStand {
         emit sold(sku);
     }
 
+ function fetchItem(uint _sku) public view returns(string memory name, uint sku, string  memory stateIs, address seller, address buyer){
+        uint state;
+
+        name = items[_sku].name;
+        sku = items[_sku].sku;
+       
+        state = uint(items[_sku].state);
+
+        if(state == 0){
+            stateIs = "For Sale";
+        }
+
+        if(state == 1) {
+            stateIs = "Sold";
+        }
+        seller = items[_sku].seller;
+        buyer  = items[_sku].buyer;
+    }
+
 }
+   
+
+
+
+// https://api-m.sandbox.paypal.com/v1/reporting/transactions?start_date=2021-10-17T00:00:00-0700&end_date=2021-10-19T23:59:59-0700
