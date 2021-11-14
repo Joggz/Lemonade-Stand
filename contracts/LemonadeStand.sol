@@ -17,6 +17,7 @@ contract LemonadeStand {
         address buyer;
     }
 
+Item [] lemonades;
     mapping (uint => Item) items;
 
     // events
@@ -56,6 +57,12 @@ contract LemonadeStand {
         require(items[_sku].state == State.sold);
         _; 
     }
+    modifier checkCustomerShouldRecieveChange(uint sku){
+        uint price = items[sku].price;
+        uint amountToRefund = msg.value - price;
+       payable( items[sku].buyer).transfer(amountToRefund);
+        _;
+    }
 
     function addItem( string memory  _name, uint _price) onlyOwner public{
         skucount = skucount + 1;
@@ -65,7 +72,33 @@ contract LemonadeStand {
         items[skucount] = Item({name: _name, sku: skucount, price: _price, state: State.forsale, seller: Owner, buyer: address(0)});
     }
 
-    function buyItem(uint sku) forSale(sku) paidEnough(items[sku].price) payable public {
+//   not sure about this block of code, but i intend to get all items from the mapping.
+
+    // function getAllItems() public view returns(string[] memory, uint[] memory, uint[] memory, uint[] memory, address[] memory, address[] memory ){
+    //     string[] memory names = new string[](skucount);
+    //     uint[] memory skus  = new uint[](skucount);
+    //     uint[] memory price = new uint[](skucount);
+    //     uint[] memory state = new uint[](skucount);
+    //     address[] memory sellers = new address[](skucount);
+    //     address[] memory buyers = new address[](skucount);
+
+    //     for (uint256 index = 0; index < skucount; index++) {
+    //          Item storage lemo = lemonades[index];
+    //          names[index] = lemo.name;
+    //           skus[index] = lemo.sku;
+    //            price[index] = lemo.price;
+    //             state[index] = uint(lemo.state);
+    //              sellers[index] = lemo.seller;
+    //               buyers[index] = lemo.buyer;
+            
+    //     }
+        
+
+    //     return (names, skus, price, state, sellers, buyers);
+    // }
+   
+
+    function buyItem(uint sku) forSale(sku) paidEnough(items[sku].price) checkCustomerShouldRecieveChange(sku) payable public {
       address   buyer = msg.sender;
 
         uint price = items[sku].price;
@@ -97,7 +130,9 @@ contract LemonadeStand {
         }
         seller = items[_sku].seller;
         buyer  = items[_sku].buyer;
-    }
+
+        return (name, sku, stateIs, seller, buyer); 
+           }
 
     function shipItem(uint _sku)  public  Sold(_sku) verifyCaller(items[_sku].seller) returns(string memory stateIs) {
          uint state;
@@ -114,7 +149,3 @@ contract LemonadeStand {
 
 }
    
-
-
-
-// https://api-m.sandbox.paypal.com/v1/reporting/transactions?start_date=2021-10-17T00:00:00-0700&end_date=2021-10-19T23:59:59-0700
